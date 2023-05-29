@@ -1,9 +1,9 @@
-const Notification = ({ message }) => {
+const Notification = ({ message, color }) => {
   return (
     <div
       style={{
-        border: "2px solid red",
-        color: "red",
+        border: `2px solid ${color}`,
+        color: color,
         borderRadius: "10px",
         paddingLeft: "1rem",
         backgroundColor: "lightgray",

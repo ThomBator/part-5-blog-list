@@ -14,6 +14,7 @@ const App = () => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [notificationMSG, setNotificationMSG] = useState(null);
+  const [notificationColor, setNotificationColor] = useState("");
 
   const handleAdd = async (event) => {
     event.preventDefault();
@@ -29,9 +30,16 @@ const App = () => {
           setTitle("");
           setAuthor("");
           setUrl("");
+          setNotificationMSG("New Blog Added");
+          setNotificationColor("green");
         });
+      setTimeout(() => {
+        setNotificationMSG(null);
+        setNotificationColor("");
+      }, 5000);
     } else {
       setNotificationMSG("Invalid user, please login and try again");
+      setNotificationColor("red");
       setTimeout(() => {
         setNotificationMSG(null);
       }, 5000);
@@ -47,10 +55,19 @@ const App = () => {
       setUsername("");
       setPassword("");
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-    } catch (exception) {
-      setNotificationMSG("Invalid credenitals");
+      blogService.setToken(user.token);
+      setNotificationMSG("Logged In Successfully!");
+      setNotificationColor("green");
       setTimeout(() => {
         setNotificationMSG(null);
+        setNotificationColor("");
+      }, 5000);
+    } catch (exception) {
+      setNotificationMSG("Invalid credenitals");
+      setNotificationColor("red");
+      setTimeout(() => {
+        setNotificationMSG(null);
+        setNotificationColor("");
       }, 5000);
     }
   };
@@ -137,7 +154,9 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      {notificationMSG && <Notification message={notificationMSG} />}
+      {notificationMSG && (
+        <Notification message={notificationMSG} color={notificationColor} />
+      )}
       {!user && loginForm()}
       {user && (
         <div>
