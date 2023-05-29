@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const getTokenFrom = (request) => {
   const authorization = request.get("authorization");
+  console.log("Authorization", authorization);
   if (authorization && authorization.startsWith("Bearer ")) {
     return authorization.replace("Bearer ", "");
   }
@@ -22,20 +23,21 @@ blogRouter.get("/", async (request, response) => {
 
 blogRouter.post("/", async (request, response) => {
   const body = request.body;
+  console.log("Body", body);
 
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
   if (!decodedToken.id) {
     return response.status(401).json({ error: "token invalid" });
   }
 
-  const user = await User.findById(decodedToken.id);
+  const user = await User.findById(decodedToken._id);
 
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes,
-    user: body.userId,
+    likes: 0,
+    user,
   });
 
   const savedBlog = await blog.save();

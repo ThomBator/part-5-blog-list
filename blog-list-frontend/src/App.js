@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Notification from "./components/Notifications";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -9,9 +10,32 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+  const [notificationMSG, setNotificationMSG] = useState(null);
 
-  const addBlog = async (event) => {
-    console.log(event);
+  const handleAdd = async (event) => {
+    event.preventDefault();
+    if (user) {
+      blogService
+        .create({
+          title: title,
+          author: author,
+          url: url,
+        })
+        .then((returnedBlog) => {
+          setBlogs(blogs.concat(returnedBlog));
+          setTitle("");
+          setAuthor("");
+          setUrl("");
+        });
+    } else {
+      setNotificationMSG("Invalid user, please login and try again");
+      setTimeout(() => {
+        setNotificationMSG(null);
+      }, 5000);
+    }
   };
 
   const handleLogin = async (event) => {
@@ -24,7 +48,10 @@ const App = () => {
       setPassword("");
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
     } catch (exception) {
-      alert("Invalid credentials");
+      setNotificationMSG("Invalid credenitals");
+      setTimeout(() => {
+        setNotificationMSG(null);
+      }, 5000);
     }
   };
 
@@ -73,9 +100,44 @@ const App = () => {
     </form>
   );
 
+  const addBlog = () => {
+    return (
+      <form onClick={handleAdd}>
+        <div>
+          <label htmlFor="title">title:</label>
+          <input
+            name="title"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="author">author:</label>
+          <input
+            name="author"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="url">url:</label>
+          <input
+            name="url"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    );
+  };
+
   return (
     <div>
       <h2>Blogs</h2>
+      {notificationMSG && <Notification message={notificationMSG} />}
       {!user && loginForm()}
       {user && (
         <div>
@@ -86,6 +148,9 @@ const App = () => {
             </button>
           </p>
 
+          <h3>Add New Blog</h3>
+          {addBlog()}
+          <br />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
