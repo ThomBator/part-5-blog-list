@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Notification from "./components/Notifications";
 import Blog from "./components/Blog";
+import LoginForm from "./components/Login";
+import BlogForm from "./components/BlogForm";
+import Toggleable from "./components/Toggleable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -10,29 +13,28 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+
   const [notificationMSG, setNotificationMSG] = useState(null);
   const [notificationColor, setNotificationColor] = useState("");
 
-  const handleAdd = async (event) => {
-    event.preventDefault();
+  const blogFormRef = useRef();
+
+  const handleAdd = async (noteObject) => {
     if (user) {
       blogService
         .create({
-          title: title,
-          author: author,
-          url: url,
+          title: noteObject.title,
+          author: noteObject.author,
+          url: noteObject.url,
         })
         .then((returnedBlog) => {
           setBlogs(blogs.concat(returnedBlog));
-          setTitle("");
-          setAuthor("");
-          setUrl("");
+          blogFormRef.current.toggleVisibility();
+
           setNotificationMSG("New Blog Added");
           setNotificationColor("green");
         });
+
       setTimeout(() => {
         setNotificationMSG(null);
         setNotificationColor("");
@@ -77,8 +79,15 @@ const App = () => {
     setUser(null);
   };
 
+  const removeBlog = (id) => {
+    blogService.remove(id);
+    setBlogs(blogs.filter((blog) => blog.id !== id));
+  };
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
+    });
   }, []);
 
   useEffect(() => {
@@ -91,73 +100,22 @@ const App = () => {
     }
   }, []);
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label htmlFor="Username">username</label>
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="Password">password</label>
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <div>
-        <button type="submit">login</button>
-      </div>
-    </form>
-  );
-
-  const addBlog = () => {
-    return (
-      <form onClick={handleAdd}>
-        <div>
-          <label htmlFor="title">title:</label>
-          <input
-            name="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="author">author:</label>
-          <input
-            name="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="url">url:</label>
-          <input
-            name="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    );
-  };
-
   return (
     <div>
       <h2>Blogs</h2>
       {notificationMSG && (
         <Notification message={notificationMSG} color={notificationColor} />
       )}
-      {!user && loginForm()}
+      {!user && (
+        <LoginForm
+          handleSubmit={handleLogin}
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+        />
+      )}
+
       {user && (
         <div>
           <p>
@@ -168,10 +126,13 @@ const App = () => {
           </p>
 
           <h3>Add New Blog</h3>
-          {addBlog()}
+          <Toggleable buttonLabel="Add Blog" ref={blogFormRef}>
+            <BlogForm handleAdd={handleAdd} />
+          </Toggleable>
+
           <br />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} user={user} remove={removeBlog} />
           ))}
         </div>
       )}
