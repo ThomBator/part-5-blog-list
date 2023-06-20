@@ -29,4 +29,6 @@ const Toggleable = forwardRef((props, refs) => {
   );
 });
 
+Toggleable.forwardRef = "Toggleable";
+
 export default Toggleable;

@@ -21,6 +21,7 @@ const App = () => {
 
   const handleAdd = async (noteObject) => {
     if (user) {
+      blogFormRef.current.toggleVisibility();
       blogService
         .create({
           title: noteObject.title,
@@ -29,10 +30,10 @@ const App = () => {
         })
         .then((returnedBlog) => {
           setBlogs(blogs.concat(returnedBlog));
-          blogFormRef.current.toggleVisibility();
 
           setNotificationMSG("New Blog Added");
           setNotificationColor("green");
+          return "success";
         });
 
       setTimeout(() => {
@@ -42,9 +43,11 @@ const App = () => {
     } else {
       setNotificationMSG("Invalid user, please login and try again");
       setNotificationColor("red");
+
       setTimeout(() => {
         setNotificationMSG(null);
       }, 5000);
+      return "fail";
     }
   };
 
@@ -124,7 +127,6 @@ const App = () => {
               Logout
             </button>
           </p>
-
           <h3>Add New Blog</h3>
           <Toggleable buttonLabel="Add Blog" ref={blogFormRef}>
             <BlogForm handleAdd={handleAdd} />

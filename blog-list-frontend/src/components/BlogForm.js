@@ -1,19 +1,22 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const BlogForm = ({ handleAdd }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    handleAdd({ title, author, url });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    const response = await handleAdd({ title, author, url });
+    if (response === "success") {
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+    }
   };
   return (
-    <form onClick={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="title">title:</label>
         <input
@@ -43,6 +46,10 @@ const BlogForm = ({ handleAdd }) => {
       </div>
     </form>
   );
+};
+
+BlogForm.propTypes = {
+  handleAdd: PropTypes.func.isRequired,
 };
 
 export default BlogForm;
