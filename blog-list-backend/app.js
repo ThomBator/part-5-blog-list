@@ -8,6 +8,11 @@ const loginRouter = require("./controllers/login");
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 
+if (process.env.NODE_ENV === "test") {
+  const testingRouter = require("./controllers/testing");
+  app.use("/api/testing", testingRouter);
+}
+
 const mongoose = require("mongoose");
 //strictQuery prevents from writing fields that are not defined in schema
 //I think generally it is best to leave it as default true but I guess the course designers want it off for some reason.
