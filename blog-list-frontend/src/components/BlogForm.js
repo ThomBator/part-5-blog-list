@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 const BlogForm = ({ handleAdd }) => {
@@ -20,6 +20,7 @@ const BlogForm = ({ handleAdd }) => {
       <div>
         <label htmlFor="title">title:</label>
         <input
+          id="title"
           name="title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
@@ -28,6 +29,7 @@ const BlogForm = ({ handleAdd }) => {
       <div>
         <label htmlFor="author">author:</label>
         <input
+          id="author"
           name="author"
           value={author}
           onChange={(event) => setAuthor(event.target.value)}
@@ -36,13 +38,16 @@ const BlogForm = ({ handleAdd }) => {
       <div>
         <label htmlFor="url">url:</label>
         <input
+          id="url"
           name="url"
           value={url}
           onChange={(event) => setUrl(event.target.value)}
         />
       </div>
       <div>
-        <button type="submit">add</button>
+        <button id="blogSubmit" type="submit">
+          add
+        </button>
       </div>
     </form>
   );

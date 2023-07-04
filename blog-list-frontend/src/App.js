@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import Notification from "./components/Notifications";
 import Blog from "./components/Blog";
@@ -41,7 +42,7 @@ const App = () => {
         setNotificationColor("");
       }, 5000);
     } else {
-      setNotificationMSG("Invalid user, please login and try again");
+      setNotificationMSG("wrong credentials");
       setNotificationColor("red");
 
       setTimeout(() => {
@@ -68,7 +69,7 @@ const App = () => {
         setNotificationColor("");
       }, 5000);
     } catch (exception) {
-      setNotificationMSG("Invalid credenitals");
+      setNotificationMSG("wrong credentials");
       setNotificationColor("red");
       setTimeout(() => {
         setNotificationMSG(null);
@@ -122,7 +123,7 @@ const App = () => {
       {user && (
         <div>
           <p>
-            {user.name} logged in{" "}
+            {user.name} is logged in{" "}
             <button type="button" onClick={logOut}>
               Logout
             </button>

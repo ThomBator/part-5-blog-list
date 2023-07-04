@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 
 const LoginForm = (props) => (
@@ -8,6 +9,7 @@ const LoginForm = (props) => (
         type="text"
         value={props.username}
         name="Username"
+        id="username"
         onChange={props.handleUsernameChange}
       />
     </div>
@@ -17,11 +19,14 @@ const LoginForm = (props) => (
         type="password"
         value={props.password}
         name="Password"
+        id="password"
         onChange={props.handlePasswordChange}
       />
     </div>
     <div>
-      <button type="submit">login</button>
+      <button id="login-button" type="submit">
+        login
+      </button>
     </div>
   </form>
 );

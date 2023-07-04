@@ -1,9 +1,9 @@
-import Toggleable from "./Toggleable";
 import blogService from "../services/blogs";
 import { useState } from "react";
 
 const Blog = ({ blog, user, remove }) => {
   const [likes, setLikes] = useState(blog.likes);
+  const [visible, setVisible] = useState(false);
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -29,18 +29,23 @@ const Blog = ({ blog, user, remove }) => {
       <button type="button" onClick={handleRemove}>
         delete
       </button>
-      <Toggleable buttonLabel="view">
-        {blog.url}
-        <br />
-        {likes}{" "}
-        <button type="button" onClick={addLike}>
-          like
-        </button>
-        <br />
-        {user.name}
-        <br />
-      </Toggleable>
-      <br />
+      <button onClick={() => setVisible(!visible)}>
+        {visible ? "hide" : "show"}{" "}
+      </button>
+      {visible && (
+        <>
+          {blog.url}
+          <br />
+          {likes}{" "}
+          <button type="button" onClick={addLike}>
+            like
+          </button>
+          <br />
+          {user.name}
+          <br />
+          <br />
+        </>
+      )}
     </div>
   );
 };
