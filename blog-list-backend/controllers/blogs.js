@@ -30,6 +30,7 @@ blogRouter.post("/", async (request, response) => {
   }
 
   const user = await User.findById(decodedToken.id);
+
   if (body.title && body.url && body.author) {
     const blog = new Blog({
       title: body.title,
@@ -42,6 +43,7 @@ blogRouter.post("/", async (request, response) => {
     const savedBlog = await blog.save();
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
+
     response.status(201).json(savedBlog);
   } else {
     response.status(400);
